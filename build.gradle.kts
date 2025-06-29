@@ -1,3 +1,6 @@
+val picocliVersion = "4.7.7"
+val junitVersion = "5.10.0"
+
 plugins {
     id("java")
 }
@@ -10,7 +13,10 @@ repositories {
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    implementation("info.picocli:picocli:$picocliVersion")
+    annotationProcessor("info.picocli:picocli-codegen:$picocliVersion")
+
+    testImplementation(platform("org.junit:junit-bom:$junitVersion"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 

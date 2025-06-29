@@ -1,12 +1,22 @@
+import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.testing.Test
+import org.gradle.jvm.tasks.Jar
+
 val picocliVersion = "4.7.7"
 val junitVersion = "5.10.0"
 
 plugins {
-    id("java")
+    java
+    application
 }
 
 group = "org.example"
-version = "1.0-SNAPSHOT"
+version = "1.0"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
 repositories {
     mavenCentral()
@@ -20,6 +30,24 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
-tasks.test {
+application {
+    mainClass.set("org.example.Main")
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+    options.compilerArgs.addAll(listOf("--release", "17", "-Aproject=${project.group}/${project.name}"))
+}
+
+tasks.named<Jar>("jar") {
+    archiveBaseName.set("util")
+    archiveFileName.set("${archiveBaseName.get()}.jar")
+    manifest {
+        attributes["Main-Class"] = application.mainClass.get()
+    }
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+}
+
+tasks.named<Test>("test") {
     useJUnitPlatform()
 }

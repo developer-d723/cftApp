@@ -1,5 +1,7 @@
 package org.example;
 
+import org.example.file.InputFileHandler;
+import org.example.file.OutputFileHandler;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -17,7 +19,7 @@ public class ArgsParser implements Callable<Integer> {
     @Parameters(index = "0..*", description = "input files")
     private List<File> inputFiles;
 
-    @Option(names = "-o", description = "output path for result files, default is current directory")
+    @Option(names = "-o", description = "output path for resulting files, default is current directory")
     private Path outputPath = Paths.get("");
 
     @Option(names = "-s", description = "display short statistics")
@@ -34,6 +36,8 @@ public class ArgsParser implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+        InputFileHandler inputFileHandler = new InputFileHandler(inputFiles);
+        OutputFileHandler outputFileHandler = new OutputFileHandler(outputPath, prefix);
         return 0;
     }
 }

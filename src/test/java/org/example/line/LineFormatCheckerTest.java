@@ -1,5 +1,6 @@
 package org.example.line;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -7,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class LineFormatCheckerTest {
 
     @Test
+    @DisplayName("Should be integer numbers")
     void testIntegerValues() {
         assertEquals(LineType.INTEGER, LineFormatChecker.check("0").lineType());
         assertEquals(LineType.INTEGER, LineFormatChecker.check("0012").lineType());
@@ -16,9 +18,11 @@ class LineFormatCheckerTest {
         assertEquals(LineType.INTEGER, LineFormatChecker.check(" 1 ").lineType());
         assertEquals(LineType.INTEGER, LineFormatChecker.check(" +1234").lineType());
         assertEquals(LineType.INTEGER, LineFormatChecker.check(" -1234    ").lineType());
+        assertEquals(LineType.INTEGER, LineFormatChecker.check("1234567890123456789").lineType());
     }
 
     @Test
+    @DisplayName("Should be floating-point numbers")
     void testFloatValues() {
         assertEquals(LineType.FLOAT, LineFormatChecker.check("0.00").lineType());
         assertEquals(LineType.FLOAT, LineFormatChecker.check("1.2345").lineType());
@@ -32,6 +36,7 @@ class LineFormatCheckerTest {
     }
 
     @Test
+    @DisplayName("Should be strings")
     void testStringValues() {
         assertEquals(LineType.STRING, LineFormatChecker.check("abcde").lineType());
         assertEquals(LineType.STRING, LineFormatChecker.check("12345abcd").lineType());

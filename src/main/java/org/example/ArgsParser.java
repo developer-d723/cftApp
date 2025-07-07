@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.file.InputFileHandler;
 import org.example.file.OutputFileHandler;
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -22,17 +23,27 @@ public class ArgsParser implements Callable<Integer> {
     @Option(names = "-o", description = "output path for resulting files, default is current directory")
     private Path outputPath = Paths.get("");
 
-    @Option(names = "-s", description = "display short statistics")
-    private boolean shortStats = false;
-
-    @Option(names = "-f", description = "display full statistics")
-    private boolean fullStats = true;
+    @CommandLine.ArgGroup(multiplicity = "1")
+    StatisticsArguments statisticsArguments;
 
     @Option(names = "-p", description = "prefix for output file names")
     private String prefix = "";
 
     @Option(names = "-a", description = "append to existing files instead of overwriting")
     private boolean appendMode = false;
+
+
+    static class StatisticsArguments {
+        @Option(names = "-s", required = true, description = "display short statistics")
+        boolean shortStatistics;
+
+        @Option(names = "-f", required = true, description = "display full statistics")
+        boolean fullStatistics;
+    }
+
+
+
+
 
     @Override
     public Integer call() throws Exception {

@@ -17,6 +17,14 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+/**
+ * This class uses the Picocli CLI library to process text files.
+ * <p>
+ * It parses text files, checks the format of each line, and writes them to output files based on their type.
+ * Supported types are integer, string and float. Supports prefix for the output files names.
+ * The output files can either be appended to or overwritten, depending on the user's choice.
+ * The class also displays processing statistics.
+ */
 
 @Command(name = "util", mixinStandardHelpOptions = true, version = "1.0",
         description = " ")
@@ -45,6 +53,13 @@ public class ArgsParser implements Callable<Integer> {
         boolean fullStatistics;
     }
 
+
+    /**
+     * The main entry point called by Picocli after parsing the command-line arguments.
+     * Responsible for coordinating the entire file filtering process.
+     *
+     * @return 0 if successful, 1 in case of a critical failure.
+     */
 
     @Override
     public Integer call() {

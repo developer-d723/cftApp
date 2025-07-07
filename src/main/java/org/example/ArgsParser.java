@@ -37,13 +37,13 @@ public class ArgsParser implements Callable<Integer> {
     private List<File> inputFiles;
 
     @Option(names = "-o", description = "output path for resulting files, default is current directory")
-    private final Path outputPath = Paths.get("");
+    private  Path outputPath = Paths.get("");
 
     @Option(names = "-p", description = "prefix for output file names")
-    private final String prefix = "";
+    private  String prefix = "";
 
     @Option(names = "-a", description = "append to existing files instead of overwriting")
-    private final boolean appendMode = false;
+    private  boolean appendMode = false;
 
     // mulitiplicity = "1" means that statistics arguments are mutually exclusive
     @CommandLine.ArgGroup(multiplicity = "1")
@@ -72,6 +72,7 @@ public class ArgsParser implements Callable<Integer> {
         boolean isFullStatistics = statisticsArguments.fullStatistics;
         StatisticsManager statisticsManager = new StatisticsManager(isFullStatistics);
         InputFileHandler inputFileHandler = new InputFileHandler(inputFiles);
+        LineFormatChecker lineFormatChecker = new LineFormatChecker();
 
         System.out.printf("Output path: '%s', Prefix: '%s', Append mode: %s%n",
                 outputPath.toAbsolutePath().normalize(), prefix, appendMode);
@@ -79,7 +80,7 @@ public class ArgsParser implements Callable<Integer> {
 
         try (OutputFileHandler outputHandler = new OutputFileHandler(outputPath, prefix, appendMode)) {
             inputFileHandler.handleLines(line -> {
-                CheckLineFormatResult result = LineFormatChecker.check(line);
+                CheckLineFormatResult result = lineFormatChecker.check(line);
                 try {
                     outputHandler.writeToFile(result);
                     statisticsManager.collectStatistics(result);

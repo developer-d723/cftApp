@@ -6,7 +6,6 @@ import java.util.Set;
  * A class for determining the type of given string.
  * <p>
  * Options are integer (in fact, long for bigger range) , float (double) and string
- *
  */
 
 public class LineFormatChecker {
@@ -15,7 +14,7 @@ public class LineFormatChecker {
      */
     private static final Set<String> BAD_FLOAT_STRINGS = Set.of("NaN", "Infinity", "+Infinity", "-Infinity");
 
-    public static CheckLineFormatResult check(String line) {
+    public CheckLineFormatResult check(String line) {
         if (line.isBlank() || BAD_FLOAT_STRINGS.contains(line)) {
             return new CheckLineFormatResult(line, LineType.STRING);
         }

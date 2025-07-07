@@ -22,7 +22,7 @@ public class InputFileHandler {
      * performs the action passed to 'lineProcessor'
      * Action is performed in lineProcessor.accept()
      *
-     * @param lineProcessor An action (in the form of a Consumer) to perform for each row.
+     * @param lineProcessor An action (Consumer)
      */
     public void handleLines(Consumer<String> lineProcessor) {
         if (inputFiles == null) {

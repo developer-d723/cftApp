@@ -1,8 +1,8 @@
 package org.example.line;
 
 public class LineFormatChecker {
-    CheckLineFormatResult checkLineFormat(String string) {
 
+    public CheckLineFormatResult check(String line) {
         return null;
     }
 }

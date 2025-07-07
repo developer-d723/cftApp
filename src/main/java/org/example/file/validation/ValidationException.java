@@ -1,4 +1,4 @@
-package org.example.file;
+package org.example.file.validation;
 
 public class ValidationException extends Exception {
     private final ErrorType code;

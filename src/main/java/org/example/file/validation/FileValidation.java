@@ -1,4 +1,4 @@
-package org.example.file;
+package org.example.file.validation;
 
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;

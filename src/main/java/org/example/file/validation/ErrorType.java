@@ -1,4 +1,4 @@
-package org.example.file;
+package org.example.file.validation;
 
 public enum ErrorType {
     INVALID_ARGUMENT_COUNT,

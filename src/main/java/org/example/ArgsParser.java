@@ -2,6 +2,9 @@ package org.example;
 
 import org.example.file.InputFileHandler;
 import org.example.file.OutputFileHandler;
+import org.example.file.validation.ErrorType;
+import org.example.file.validation.PathValidator;
+import org.example.file.validation.ValidationException;
 import org.example.line.CheckLineFormatResult;
 import org.example.line.LineFormatChecker;
 import org.example.statistics.StatisticsManager;
@@ -34,13 +37,13 @@ public class ArgsParser implements Callable<Integer> {
     private List<File> inputFiles;
 
     @Option(names = "-o", description = "output path for resulting files, default is current directory")
-    private Path outputPath = Paths.get("");
+    private final Path outputPath = Paths.get("");
 
     @Option(names = "-p", description = "prefix for output file names")
-    private String prefix = "";
+    private final String prefix = "";
 
     @Option(names = "-a", description = "append to existing files instead of overwriting")
-    private boolean appendMode = false;
+    private final boolean appendMode = false;
 
     // mulitiplicity = "1" means that statistics arguments are mutually exclusive
     @CommandLine.ArgGroup(multiplicity = "1")
@@ -62,34 +65,72 @@ public class ArgsParser implements Callable<Integer> {
      */
 
     @Override
-    public Integer call() {
+    public Integer call() throws ValidationException { // Объявляем, что метод может выбросить наше исключение
+
+        allPathsValidation();
 
         boolean isFullStatistics = statisticsArguments.fullStatistics;
         StatisticsManager statisticsManager = new StatisticsManager(isFullStatistics);
         InputFileHandler inputFileHandler = new InputFileHandler(inputFiles);
-        LineFormatChecker lineFormatChecker = new LineFormatChecker();
+
+        System.out.printf("Output path: '%s', Prefix: '%s', Append mode: %s%n",
+                outputPath.toAbsolutePath().normalize(), prefix, appendMode);
 
 
         try (OutputFileHandler outputHandler = new OutputFileHandler(outputPath, prefix, appendMode)) {
-
             inputFileHandler.handleLines(line -> {
-
-                CheckLineFormatResult result = lineFormatChecker.check(line);
+                CheckLineFormatResult result = LineFormatChecker.check(line);
                 try {
                     outputHandler.writeToFile(result);
                     statisticsManager.collectStatistics(result);
                 } catch (IOException e) {
-                    System.err.println("Could not write line " + line + ", skipping. Error message: "
-                            + e.getMessage());
+                    System.err.println("Could not write line '" + line + "', skipping. Error: " + e.getMessage());
                 }
             });
         } catch (IOException e) {
-
-            System.err.println("A fatal error occurred with the output files: " + e.getMessage());
-            return 1; // fatal error code
+            System.err.println("A critical I/O error occurred with the output files: " + e.getMessage());
+            return 1; // fatal error
         }
-        System.out.println("\nStatistics:");
+
+        System.out.println("\nFinished. Statistics:");
         statisticsManager.printStatistics();
-        return 0; // success code
+        return 0; // success
+    }
+
+    /**
+     * Validation checks for command-line paths.
+     *
+     * @throws ValidationException if any check fails.
+     */
+    private void allPathsValidation() throws ValidationException {
+        PathValidator pathValidator = new PathValidator();
+        pathValidator.validateNameSyntax(prefix);
+        pathValidator.validateOutputPath(outputPath);
+
+        if (inputFiles == null || inputFiles.isEmpty()) {
+
+            throw new ValidationException(ErrorType.INPUT_FILE_NOT_PROVIDED,
+                    "At least one input file must be specified.");
+        }
+        for (File inputFile : inputFiles) {
+            pathValidator.validateInputFile(inputFile);
+        }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

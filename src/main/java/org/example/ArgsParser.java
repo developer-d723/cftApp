@@ -7,7 +7,7 @@ import org.example.file.validation.PathValidator;
 import org.example.file.validation.ValidationException;
 import org.example.line.CheckLineFormatResult;
 import org.example.line.LineFormatChecker;
-import org.example.statistics.StatisticsManager;
+import org.example.statistics.manager.StatisticsManager;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -111,7 +111,7 @@ public class ArgsParser implements Callable<Integer> {
         if (inputFiles == null || inputFiles.isEmpty()) {
 
             throw new ValidationException(ErrorType.INPUT_FILE_NOT_PROVIDED,
-                    "At least one input file must be specified.");
+                    "At least one input file must be specified");
         }
         for (File inputFile : inputFiles) {
             pathValidator.validateInputFile(inputFile);

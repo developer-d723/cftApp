@@ -1,4 +1,4 @@
-package org.example.statistics;
+package org.example.statistics.manager;
 
 import org.example.line.CheckLineFormatResult;
 

@@ -3,7 +3,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 
 val picocliVersion = "4.7.7"
-val junitVersion = "5.10.0"
+val junitVersion = "5.11.4"
 
 plugins {
     java
@@ -28,6 +28,7 @@ dependencies {
 
     testImplementation(platform("org.junit:junit-bom:$junitVersion"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 application {
@@ -50,4 +51,18 @@ tasks.named<Jar>("jar") {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
+    jvmArgs("--enable-native-access=ALL-UNNAMED")
+}
+
+
+
+tasks.withType<Javadoc> {
+    options.encoding = "UTF-8"
+    (options as? CoreJavadocOptions)?.addStringOption("Xdoclint:none", "-quiet")
+}
+
+@Suppress("unused")
+val javadocJar by tasks.registering(Jar::class) {
+    from(tasks.javadoc)
+    archiveClassifier.set("javadoc")
 }

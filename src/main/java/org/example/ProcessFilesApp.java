@@ -8,6 +8,7 @@ import org.example.file.validation.ValidationException;
 import org.example.line.CheckLineFormatResult;
 import org.example.line.LineFormatChecker;
 import org.example.statistics.manager.StatisticsManager;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -31,31 +32,19 @@ import java.util.concurrent.Callable;
 
 @Command(name = "util", mixinStandardHelpOptions = true, version = "1.0",
         description = " ")
-public class ArgsParser implements Callable<Integer> {
-
-    @Parameters(index = "0..*", description = "input files")
-    private List<File> inputFiles;
-
-    @Option(names = "-o", description = "output path for resulting files, default is current directory")
-    private  Path outputPath = Paths.get("");
-
-    @Option(names = "-p", description = "prefix for output file names")
-    private  String prefix = "";
-
-    @Option(names = "-a", description = "append to existing files instead of overwriting")
-    private  boolean appendMode = false;
+public class ProcessFilesApp implements Callable<Integer> {
 
     // mulitiplicity = "1" means that statistics arguments are mutually exclusive
     @CommandLine.ArgGroup(multiplicity = "1")
     StatisticsArguments statisticsArguments;
-
-    static class StatisticsArguments {
-        @Option(names = "-s", required = true, description = "display short statistics")
-        boolean shortStatistics;
-        @Option(names = "-f", required = true, description = "display full statistics")
-        boolean fullStatistics;
-    }
-
+    @Parameters(index = "0..*", description = "input files")
+    private List<File> inputFiles;
+    @Option(names = "-o", description = "output path for resulting files, default is current directory")
+    private Path outputPath = Paths.get("");
+    @Option(names = "-p", description = "prefix for output file names")
+    private  String prefix = "";
+    @Option(names = "-a", description = "append to existing files instead of overwriting")
+    private boolean appendMode = false;
 
     /**
      * The main entry point called by Picocli after parsing the command-line arguments.
@@ -65,10 +54,9 @@ public class ArgsParser implements Callable<Integer> {
      */
 
     @Override
-    public Integer call() throws ValidationException { // Объявляем, что метод может выбросить наше исключение
+    public Integer call() throws ValidationException {
 
-        allPathsValidation();
-
+        allPathsValidation(); // validates both paths, file names and prefixes
         boolean isFullStatistics = statisticsArguments.fullStatistics;
         StatisticsManager statisticsManager = new StatisticsManager(isFullStatistics);
         InputFileHandler inputFileHandler = new InputFileHandler(inputFiles);
@@ -77,7 +65,6 @@ public class ArgsParser implements Callable<Integer> {
         System.out.printf("Output path: '%s', Prefix: '%s', Append mode: %s%n",
                 outputPath.toAbsolutePath().normalize(), prefix, appendMode);
 
-
         try (OutputFileHandler outputHandler = new OutputFileHandler(outputPath, prefix, appendMode)) {
             inputFileHandler.handleLines(line -> {
                 CheckLineFormatResult result = lineFormatChecker.check(line);
@@ -85,11 +72,13 @@ public class ArgsParser implements Callable<Integer> {
                     outputHandler.writeToFile(result);
                     statisticsManager.collectStatistics(result);
                 } catch (IOException e) {
-                    System.err.println("Could not write line '" + line + "', skipping. Error: " + e.getMessage());
+                    System.err.println("Could not write line '" + line
+                            + "', skipping. Error: " + e.getMessage());
                 }
             });
         } catch (IOException e) {
-            System.err.println("A critical I/O error occurred with the output files: " + e.getMessage());
+            System.err.println("A critical I/O error occurred with the output files: "
+                    + e.getMessage());
             return 1; // fatal error
         }
 
@@ -99,7 +88,7 @@ public class ArgsParser implements Callable<Integer> {
     }
 
     /**
-     * Validation checks for command-line paths.
+     * Validation checks for command-line paths, prefix.
      *
      * @throws ValidationException if any check fails.
      */
@@ -116,6 +105,13 @@ public class ArgsParser implements Callable<Integer> {
         for (File inputFile : inputFiles) {
             pathValidator.validateInputFile(inputFile);
         }
+    }
+
+    static class StatisticsArguments {
+        @Option(names = "-s", required = true, description = "display short statistics")
+        boolean shortStatistics;
+        @Option(names = "-f", required = true, description = "display full statistics")
+        boolean fullStatistics;
     }
 }
 

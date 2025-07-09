@@ -53,4 +53,32 @@ class FloatStatisticsTest {
 
         System.setOut(System.out);
     }
+    @Test
+    @DisplayName("Should print integer statistics correctly in short mode")
+    void shouldPrintIntegerStatisticsShortMode() {
+
+        FloatStatistics floatStatistics = new FloatStatistics(false);
+
+        floatStatistics.getString("1.0");
+        floatStatistics.getString("2.0");
+        floatStatistics.getString("3.0");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        floatStatistics.print();
+
+        String output = out.toString();
+        assertTrue(output.contains("##### Float Statistics #####"));
+        assertTrue(output.contains("Count of collected lines: 3"));
+
+        assertFalse(output.contains("Minimum value"));
+        assertFalse(output.contains("Maximum value"));
+        assertFalse(output.contains("Sum"));
+        assertFalse(output.contains("Average value"));
+
+        System.setOut(System.out);
+    }
+
+
 }

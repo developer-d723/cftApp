@@ -66,4 +66,27 @@ class StringStatisticsTest {
         assertEquals(4, stringStatistics.getMinimumLength());
         assertEquals(13, stringStatistics.getMaximumLength());
     }
+
+    @Test
+    @DisplayName("Should print string statistics correctly in short mode")
+    void shouldPrintStringStatisticsShortMode() {
+        StringStatistics stringStatistics = new StringStatistics(false);
+        stringStatistics.getString("test");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        stringStatistics.print();
+
+        String output = out.toString();
+        assertTrue(output.contains("##### String Statistics #####"));
+        assertTrue(output.contains("Count of collected lines: 1"));
+
+        assertFalse(output.contains("Shortest line length"));
+        assertFalse(output.contains("Longest line length"));
+
+        System.setOut(System.out);
+    }
+
+
 }

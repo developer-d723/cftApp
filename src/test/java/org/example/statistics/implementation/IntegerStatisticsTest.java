@@ -60,20 +60,47 @@ class IntegerStatisticsTest {
     @DisplayName("Should handle integer overflow in full mode")
     void shouldHandleIntegerOverflow() {
 
-        IntegerStatistics stats = new IntegerStatistics(true);
+        IntegerStatistics integerStatistics = new IntegerStatistics(true);
 
-        stats.getString(Long.MAX_VALUE + "");
-        stats.getString("1");
-        stats.getString(Long.MIN_VALUE + "");
+        integerStatistics.getString(Long.MAX_VALUE + "");
+        integerStatistics.getString("1");
+        integerStatistics.getString(Long.MIN_VALUE + "");
 
-        assertEquals(3, stats.getCountOfCollectedLines());
-        assertEquals(Long.MIN_VALUE, stats.getMinimum());
-        assertEquals(Long.MAX_VALUE, stats.getMaximum());
+        assertEquals(3, integerStatistics.getCountOfCollectedLines());
+        assertEquals(Long.MIN_VALUE, integerStatistics.getMinimum());
+        assertEquals(Long.MAX_VALUE, integerStatistics.getMaximum());
         assertEquals(
                 new BigDecimal(Long.MAX_VALUE)
                         .add(BigDecimal.ONE)
                         .add(new BigDecimal(Long.MIN_VALUE)),
-                stats.getSum()
+                integerStatistics.getSum()
         );
     }
+
+    @Test
+    @DisplayName("Should print integer statistics correctly in short mode")
+    void shouldPrintIntegerStatisticsShortMode() {
+
+        IntegerStatistics integerStatistics = new IntegerStatistics(false);
+        integerStatistics.getString("1");
+        integerStatistics.getString("2");
+        integerStatistics.getString("3");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        integerStatistics.print();
+
+        String output = out.toString();
+        assertTrue(output.contains("##### Integer Statistics #####"));
+        assertTrue(output.contains("Count of collected lines: 3"));
+
+        assertFalse(output.contains("Minimum value"));
+        assertFalse(output.contains("Maximum value"));
+        assertFalse(output.contains("Sum"));
+        assertFalse(output.contains("Average value"));
+
+        System.setOut(System.out);
+    }
+
 }

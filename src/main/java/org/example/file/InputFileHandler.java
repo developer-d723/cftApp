@@ -34,7 +34,7 @@ public class InputFileHandler {
                     lineProcessor.accept(line);
                 }
             } catch (IOException e) {
-                System.err.println("Warning: Could not read file '" + inputFile.getPath() + "'. Skipping. Reason: " + e.getMessage());
+                System.err.println("Could not read file '" + inputFile.getPath() + "', skipping. Warning: " + e.getMessage());
             }
         }
     }

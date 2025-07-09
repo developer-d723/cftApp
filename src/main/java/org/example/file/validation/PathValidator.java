@@ -19,11 +19,12 @@ public class PathValidator {
         }
     }
 
+    // Only zero input files is not allowed, according to the original task. Files with invalid names,
+    // non-readable, etc. are just ignored.
     public void validateInputFile(File file) throws ValidationException {
         if (file == null) {
             throw new ValidationException(ErrorType.INPUT_FILE_NOT_PROVIDED, "Input file must be provided");
         }
-
 
     }
 

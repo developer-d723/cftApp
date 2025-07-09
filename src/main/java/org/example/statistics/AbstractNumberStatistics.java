@@ -13,6 +13,22 @@ public abstract class AbstractNumberStatistics<N extends Number & Comparable<N>>
     protected N maximum;
     protected long countOfCollectedLines = 0;
 
+    public boolean isFullStatistics() {
+        return isFullStatistics;
+    }
+
+    public N getMaximum() {
+        return maximum;
+    }
+
+    public N getMinimum() {
+        return minimum;
+    }
+
+    public BigDecimal getSum() {
+        return sum;
+    }
+
     protected AbstractNumberStatistics(boolean isFullStatistics) {
         this.isFullStatistics = isFullStatistics;
     }

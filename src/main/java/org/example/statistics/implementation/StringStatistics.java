@@ -9,6 +9,18 @@ public class StringStatistics implements StatisticsCollector {
     private Integer minimumLength = null; // Maximum String length is Integer.MAX_VALUE
     private Integer maximumLength = null;
 
+    public Integer getMinimumLength() {
+        return minimumLength;
+    }
+
+    public Integer getMaximumLength() {
+        return maximumLength;
+    }
+
+    public boolean isFullMode() {
+        return isFullMode;
+    }
+
     public StringStatistics(boolean isFullMode) {
         this.isFullMode = isFullMode;
     }

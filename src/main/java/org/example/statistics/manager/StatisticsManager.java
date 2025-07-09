@@ -41,6 +41,7 @@ public class StatisticsManager {
         }
     }
 
+
     /**
      * Prints the final statistics report by calling the print() method of each collector.
      * A collector will only print its report if it has processed at least one item.
@@ -52,4 +53,9 @@ public class StatisticsManager {
             }
         }
     }
+
+    public Map<LineType, StatisticsCollector> getStatisticsCollectors() {
+        return statisticsCollectors;
+    }
+
 }

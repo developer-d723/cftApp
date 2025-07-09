@@ -24,10 +24,9 @@ public class InputFileHandler {
      *
      * @param lineProcessor An action (Consumer)
      */
+
     public void handleLines(Consumer<String> lineProcessor) {
-        if (inputFiles == null) {
-            return;
-        }
+        if (inputFiles == null) return;
         for (File inputFile : inputFiles) {
             try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
                 String line;
@@ -35,8 +34,7 @@ public class InputFileHandler {
                     lineProcessor.accept(line);
                 }
             } catch (IOException e) {
-                System.err.println("Could not read file " + inputFile.getPath() +
-                        ", skipping. Error message: " + e.getMessage());
+                System.err.println("Warning: Could not read file '" + inputFile.getPath() + "'. Skipping. Reason: " + e.getMessage());
             }
         }
     }

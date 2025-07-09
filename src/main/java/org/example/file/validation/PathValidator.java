@@ -24,18 +24,7 @@ public class PathValidator {
             throw new ValidationException(ErrorType.INPUT_FILE_NOT_PROVIDED, "Input file must be provided");
         }
 
-        if (!file.exists()) {
-            throw new ValidationException(ErrorType.INPUT_FILE_NOT_FOUND,
-                    "Input file not found: '" + file.getPath() + "'");
-        }
-        if (!file.isFile()) {
-            throw new ValidationException(ErrorType.INPUT_PATH_IS_DIRECTORY,
-                    "Input path is a directory, not a file: '" + file.getPath() + "'");
-        }
-        if (!file.canRead()) {
-            throw new ValidationException(ErrorType.INPUT_FILE_NOT_READABLE,
-                    "Cannot read input file (check permissions): '" + file.getPath() + "'");
-        }
+
     }
 
     public void validateOutputPath(Path outputPath) throws ValidationException {
@@ -61,4 +50,8 @@ public class PathValidator {
             }
         }
     }
+
+
+
+
 }

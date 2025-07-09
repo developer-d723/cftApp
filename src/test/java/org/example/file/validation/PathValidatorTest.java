@@ -1,8 +1,9 @@
 package org.example.file.validation;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -33,17 +34,6 @@ class PathValidatorTest {
 
 
     @Test
-    @DisplayName("Should throw when input file does not exist")
-    void shouldThrow_whenInputFileDoesNotExist(@TempDir Path tempDir) {
-        File nonExistent = new File(tempDir.toFile(), "non_existent.txt");
-        ValidationException exception = assertThrows(
-                ValidationException.class, () -> pathValidator.validateInputFile(nonExistent)
-        );
-
-        assertEquals(ErrorType.INPUT_FILE_NOT_FOUND, exception.getCode());
-    }
-
-    @Test
     @DisplayName("Should allow null as a valid file name")
     void shouldNotThrow_whenFileNameIsNull() {
         assertDoesNotThrow(() -> pathValidator.validateNameSyntax(null));
@@ -65,16 +55,6 @@ class PathValidatorTest {
         );
 
         assertEquals(ErrorType.INPUT_FILE_NOT_PROVIDED, exception.getCode());
-    }
-
-    @Test
-    @DisplayName("Should throw when input path is a directory")
-    void shouldThrow_whenInputPathIsDirectory(@TempDir Path tempDir) {
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> pathValidator.validateInputFile(tempDir.toFile())
-        );
-        assertEquals(ErrorType.INPUT_PATH_IS_DIRECTORY, exception.getCode());
     }
 
     @Test
@@ -128,25 +108,9 @@ class PathValidatorTest {
         assertEquals(ErrorType.OUTPUT_DIRECTORY_NOT_CREATABLE, exception.getCode());
     }
 
-    @Test
-    @Disabled("Disabled because I cannot test it on Windows for now. Test passed successfully on my computer")
-    @DisplayName("Should throw when input file is unreadable")
-    void shouldThrow_whenInputFileIsUnreadable(@TempDir Path tempDir) throws IOException {
-        Path file = tempDir.resolve("unreadable.txt");
-        Files.createFile(file);
-        if (!file.toFile().setReadable(false)) {
-            System.out.println("Not supported on this OS");
-            return;
-        }
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> pathValidator.validateInputFile(file.toFile())
-        );
-        assertEquals(ErrorType.INPUT_FILE_NOT_READABLE, exception.getCode());
-    }
 
     @Test
-    @Disabled("Disabled because I cannot test it on Windows for now. Test passed successfully on my computer")
+    @DisabledOnOs(OS.WINDOWS)
     @DisplayName("Should throw when output directory is not writable")
     void shouldThrow_whenOutputDirectoryIsUnwritable(@TempDir Path tempDir) throws IOException {
         Path unwritableDir = tempDir.resolve("unwritableDirectory");

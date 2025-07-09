@@ -56,6 +56,12 @@ public class OutputFileHandler implements AutoCloseable {
 
         if (bufferedWriter == null) {
             Path filePath = outputPath.resolve(prefix + lineType.getFileName());
+
+            Path parentDir = filePath.getParent();
+            if (parentDir != null && !Files.exists(parentDir)) {
+                Files.createDirectories(parentDir);
+            }
+
             OpenOption[] options;
             if (appendMode) {
                 options = new OpenOption[]{StandardOpenOption.CREATE, StandardOpenOption.APPEND};
